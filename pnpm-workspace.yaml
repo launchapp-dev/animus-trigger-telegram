@@ -1,0 +1,2 @@
+onlyBuiltDependencies:
+  - "@launchapp-dev/animus-plugin-sdk"

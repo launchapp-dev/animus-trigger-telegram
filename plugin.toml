@@ -1,0 +1,65 @@
+# Static plugin metadata for animus-trigger-telegram.
+#
+# The runtime source of truth is the executable's `--manifest` JSON output
+# (printed by `src/index.ts`). This file mirrors the same data so static
+# tooling (CI lint, `animus plugin info` against an uninstalled tree, the
+# `animus.plugins` registry yaml) can read identity and env requirements
+# without spawning the binary.
+
+schema      = "animus.plugin.v1"
+name        = "animus-trigger-telegram"
+version     = "0.1.0"
+plugin_kind = "trigger_backend"
+description = "Telegram Bot API trigger plugin — webhook + long-polling inbound, send/edit/typing/photo outbound."
+
+[capabilities]
+streaming    = true
+progress     = false
+cancellation = false
+# Inbound trigger methods + outbound RPCs exposed to workflow YAML / agents.
+methods = [
+  "trigger/watch",
+  "trigger/ack",
+  "telegram/send_message",
+  "telegram/send_photo",
+  "telegram/edit_message_text",
+  "telegram/answer_callback_query",
+  "telegram/set_chat_action",
+  "health/check",
+]
+
+[binary]
+default = "animus-trigger-telegram"
+protocol = "stdio"
+
+[[env]]
+key         = "TELEGRAM_BOT_TOKEN"
+description = "Bot token issued by @BotFather. Required."
+required    = true
+sensitive   = true
+
+[[env]]
+key         = "TELEGRAM_MODE"
+description = "Inbound mode: 'polling' (default, dev) or 'webhook' (production)."
+required    = false
+
+[[env]]
+key         = "TELEGRAM_WEBHOOK_URL"
+description = "Public HTTPS URL Telegram will POST updates to. Required when TELEGRAM_MODE=webhook."
+required    = false
+
+[[env]]
+key         = "TELEGRAM_WEBHOOK_PORT"
+description = "Local TCP port the webhook HTTP listener binds (default 8090)."
+required    = false
+
+[[env]]
+key         = "TELEGRAM_WEBHOOK_SECRET_TOKEN"
+description = "Optional secret-token sent by Telegram in X-Telegram-Bot-Api-Secret-Token header for auth."
+required    = false
+sensitive   = true
+
+[[env]]
+key         = "TELEGRAM_ALLOWED_UPDATES"
+description = "Comma-separated allowed_updates list (e.g. 'message,callback_query'). Default: all."
+required    = false
