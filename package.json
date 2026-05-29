@@ -1,6 +1,6 @@
 {
   "name": "@launchapp-dev/animus-trigger-telegram",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Telegram Bot API trigger plugin for Animus — webhook + long-polling inbound, send_message/edit_message/typing/photo outbound.",
   "license": "Elastic-2.0",
   "type": "module",
@@ -8,7 +8,7 @@
     "node": ">=20"
   },
   "bin": {
-    "animus-trigger-telegram": "dist/index.js"
+    "animus-trigger-telegram": "dist/index.cjs"
   },
   "files": [
     "dist",
@@ -17,14 +17,14 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsup && chmod +x dist/index.js",
+    "build": "tsup && chmod +x dist/index.cjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "manifest": "node dist/index.js --manifest",
-    "start": "node dist/index.js"
+    "manifest": "node dist/index.cjs --manifest",
+    "start": "node dist/index.cjs"
   },
   "dependencies": {
-    "@launchapp-dev/animus-plugin-sdk": "git+https://github.com/launchapp-dev/animus-plugin-sdk-ts.git#v0.1.0",
+    "@launchapp-dev/animus-plugin-sdk": "git+https://github.com/launchapp-dev/animus-plugin-sdk-ts.git#v0.1.1",
     "grammy": "^1.30.0"
   },
   "devDependencies": {

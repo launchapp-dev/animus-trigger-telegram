@@ -180,6 +180,7 @@ describe("plugin manifest", () => {
     expect(methods).toEqual(
       expect.arrayContaining([
         "trigger/watch",
+        "trigger/schema",
         "trigger/ack",
         "telegram/send_message",
         "telegram/send_photo",
@@ -234,6 +235,20 @@ describe("dispatch", () => {
     });
     expect(res).toBeDefined();
     expect((res as { result?: { status?: string } }).result?.status).toBe("healthy");
+  });
+
+  it("returns trigger/schema metadata", async () => {
+    const res = await dispatch(state, {
+      jsonrpc: "2.0",
+      id: 9,
+      method: "trigger/schema",
+    });
+    expect((res as { result?: { kinds?: string[]; supports_ack?: boolean } }).result?.kinds).toEqual([
+      "telegram.command",
+      "telegram.message",
+      "telegram.callback_query",
+    ]);
+    expect((res as { result?: { supports_ack?: boolean } }).result?.supports_ack).toBe(true);
   });
 
   it("returns MethodNotFound for unknown methods", async () => {

@@ -8,7 +8,7 @@
 
 schema      = "animus.plugin.v1"
 name        = "animus-trigger-telegram"
-version     = "0.1.0"
+version     = "0.1.1"
 plugin_kind = "trigger_backend"
 description = "Telegram Bot API trigger plugin — webhook + long-polling inbound, send/edit/typing/photo outbound."
 
@@ -19,6 +19,7 @@ cancellation = false
 # Inbound trigger methods + outbound RPCs exposed to workflow YAML / agents.
 methods = [
   "trigger/watch",
+  "trigger/schema",
   "trigger/ack",
   "telegram/send_message",
   "telegram/send_photo",

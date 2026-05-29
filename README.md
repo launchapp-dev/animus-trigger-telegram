@@ -112,8 +112,8 @@ pnpm run test
 pnpm run typecheck
 
 # Run the plugin manually for stdio testing
-node dist/index.js < some-rpc-fixture.jsonl
-node dist/index.js --manifest
+node dist/index.cjs < some-rpc-fixture.jsonl
+node dist/index.cjs --manifest
 ```
 
 ## Not yet covered (v0.2 roadmap)

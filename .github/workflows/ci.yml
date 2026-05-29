@@ -25,4 +25,4 @@ jobs:
       - name: Build
         run: pnpm run build
       - name: Manifest smoke
-        run: node dist/index.js --manifest | head -c 4000
+        run: node dist/index.cjs --manifest | head -c 4000

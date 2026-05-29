@@ -43,7 +43,7 @@ import {
 } from "./outbound.js";
 
 const NAME = "animus-trigger-telegram";
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 const DESCRIPTION =
   "Telegram Bot API trigger plugin — webhook + long-polling inbound, send/edit/typing outbound.";
 
@@ -54,7 +54,13 @@ const OUTBOUND_METHODS = [
   "telegram/answer_callback_query",
   "telegram/set_chat_action",
 ];
-const TRIGGER_METHODS = ["trigger/watch", "trigger/ack"];
+const TRIGGER_METHODS = ["trigger/watch", "trigger/schema", "trigger/ack"];
+const TRIGGER_SCHEMA = {
+  kinds: ["telegram.command", "telegram.message", "telegram.callback_query"],
+  supports_resume: false,
+  supports_dedup: false,
+  supports_ack: true,
+};
 
 interface RuntimeState {
   bot: BotHandle | null;
@@ -280,6 +286,8 @@ async function dispatch(state: RuntimeState, frame: RpcRequest): Promise<RpcResp
         return errorResponse(id, code, `trigger/watch failed: ${msg}`);
       }
     }
+    case "trigger/schema":
+      return okResponse(id, TRIGGER_SCHEMA);
     case "trigger/ack": {
       // Some hosts deliver ack as a request rather than a notification.
       // Honor both — same payload, just send an empty ok back.
@@ -345,22 +353,22 @@ async function main(): Promise<void> {
 }
 
 // Allow this module to be imported (tests) without auto-running. We auto-run
-// when the bundle is executed directly — either via `node dist/index.js`
-// (argv[1] ends with index.js) OR via the npm-style `bin` shim
+// when the bundle is executed directly — either via `node dist/index.cjs`
+// (argv[1] ends with index.cjs) OR via the npm-style `bin` shim
 // (`animus-trigger-telegram`), which is how the Animus daemon spawns the
 // plugin per `plugin.toml::binary`. Vitest runs us as an imported module, so
 // `import.meta.url` won't match `argv[1]` there.
 const isDirectRun = (() => {
   const argv1 = process.argv[1];
   if (!argv1) return false;
-  // Direct `node dist/index.js` style.
-  if (argv1.endsWith("index.js") || argv1.endsWith("index.ts")) return true;
+  // Direct `node dist/index.cjs` style.
+  if (argv1.endsWith("index.cjs") || argv1.endsWith("index.js") || argv1.endsWith("index.ts")) return true;
   // bin-shim style: the daemon execs `animus-trigger-telegram` (the name
   // declared in package.json#bin). The shim re-execs Node against this same
   // bundle.
   if (argv1.endsWith("animus-trigger-telegram")) return true;
   // Fallback: compare the script path's resolved URL against this module's
-  // own URL. Works when the bin is a symlink to dist/index.js.
+  // own URL. Works when the bin is a symlink to dist/index.cjs.
   try {
     const moduleUrl = import.meta.url;
     const argvUrl = new URL(`file://${argv1}`).href;
